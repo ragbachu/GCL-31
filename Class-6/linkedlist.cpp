@@ -123,6 +123,70 @@ Node *delete_from_pos(Node *head, int pos) {
     return head;
 }
 
+Node *reverse(Node *head) {
+    /*
+    TC: O(n)
+    */
+    Node *prev = NULL;
+    Node *current = head;
+
+    while (current != NULL) {
+        Node *temp = current->next;
+        current->next = prev;
+        prev = current;
+        current = temp;
+    }
+
+    return prev;
+}
+
+int get_middle(Node *head) {
+
+    if (head == NULL) {
+        return -1;
+    }
+    
+    Node *slow = head;
+    Node *fast = head;
+
+    while (fast->next != NULL and fast->next->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    return slow->data;
+}
+
+// ---------------------------------------------
+
+/*
+TC: O(n)
+Aux space: O(n) (recursive stack space)
+*/
+
+Node *is_palindrome_util(Node *current, Node *head, bool &flag) {
+
+    if (current == NULL) {
+        return head;
+    }
+
+    Node *returned_node = is_palindrome_util(current->next, head, flag);
+
+    if (returned_node->data != current->data) {
+        flag = false;
+    }
+
+    return returned_node->next;
+}
+
+bool is_palindrome(Node *head) {
+
+    bool flag = true;
+    Node *temp = is_palindrome_util(head, head, flag);
+    return flag;
+}
+// ---------------------------------------------
+
 int main() {
 
     // ---------------------------------------------
@@ -196,4 +260,41 @@ int main() {
     print(head);
 
     // ---------------------------------------------
+
+    head = new Node(1);
+    head = insert_at_end(head, 2);
+    head = insert_at_end(head, 3);
+    head = insert_at_end(head, 4);
+
+    head = reverse(head);
+    print(head);
+
+    // ---------------------------------------------
+
+    head = new Node(1);
+    head = insert_at_end(head, 2);
+    head = insert_at_end(head, 3);
+    head = insert_at_end(head, 4);
+
+    cout << get_middle(head) << endl;
+
+    head = insert_at_end(head, 5);
+
+    cout << get_middle(head) << endl;
+
+    // ---------------------------------------------
+
+    head = new Node(1);
+    head = insert_at_end(head, 2);
+    head = insert_at_end(head, 2);
+    head = insert_at_end(head, 1);
+
+    cout << is_palindrome(head) << endl;
+
+    head = new Node(1);
+    head = insert_at_end(head, 2);
+    head = insert_at_end(head, 3);
+    head = insert_at_end(head, 1);
+
+    cout << is_palindrome(head) << endl;
 }
