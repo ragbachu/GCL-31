@@ -116,6 +116,70 @@ void level_order(Node *root) {
     cout << endl;
 }
 
+unordered_map<Node*, int> heights_memo;
+
+// TC: O(n)
+int height(Node *root) {
+
+    if (root == NULL) {
+        return 0;
+    }
+    if (heights_memo.find(root) != heights_memo.end()) { // If height of 'root' has already been calculated.
+        return heights_memo[root];
+    }
+
+    int left_subtree_height = height(root->left);
+    int right_subtree_height = height(root->right);
+
+    heights_memo[root] = max(left_subtree_height, right_subtree_height) + 1;
+    return heights_memo[root];
+}
+
+
+// TC : O(n^2)
+// TC : O(n) with memo approach
+int diameter_brute(Node *root) {
+
+    if (root == NULL) {
+        return 0;
+    }
+
+    int left_subtree_diam = diameter_brute(root->left);
+    int right_subtree_diam = diameter_brute(root->right);
+
+    int max_subtree_diam = max(left_subtree_diam, right_subtree_diam);
+
+    int left_subtree_height = height(root->left);
+    int right_subtree_height = height(root->right);
+    int current_diam = left_subtree_height + right_subtree_height + 1;
+
+    return max(max_subtree_diam, current_diam);
+}
+
+
+// TC : O(n)
+int diameter_helper(Node *root, int &result) {
+
+    if (root == NULL) {
+        return 0;
+    }
+
+    int left_subtree_height = diameter_helper(root->left, result);
+    int right_subtree_height = diameter_helper(root->right, result);
+
+    result = max(result, left_subtree_height + right_subtree_height + 1);
+
+    return max(left_subtree_height, right_subtree_height) + 1;
+}
+
+int diameter(Node *root) {
+
+    int result = 0;
+    diameter_helper(root, result);
+
+    return result;
+}
+
 int main() {
 
     Node *root = new Node(1);
@@ -141,4 +205,10 @@ int main() {
     level_order_brute(root);
 
     level_order(root);
+
+    cout << height(root) << endl;
+
+    cout << diameter_brute(root) << endl;
+
+    cout << diameter(root) << endl;
 }
